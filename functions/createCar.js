@@ -39,6 +39,9 @@ exports.createCar = functions.https.onCall(async (data, context) => {
         return { message: 'Car created successfully', id: docRef.id };
     } catch (error) {
         console.error('Error creating car:', error);
-        throw new functions.https.HttpsError('internal', `An error occurred while creating the car: ${error.message}`);
+        if (error.code === 'already-exists') {
+            throw new functions.https.HttpsError('already-exists', error.message);
+        }
+        throw new functions.https.HttpsError('internal', 'An error occurred while creating the car.');
     }
 });
